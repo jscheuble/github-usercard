@@ -33,8 +33,18 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['jscheuble', 'cgiroux86', 'CeeDeeBee', 'JGPico', 'juiceboxh3ro', 'kkslider2130'];
 
+followersArray.forEach(e => {
+  axios.get(`https://api.github.com/users/${e}`)
+    .then(res => {
+      console.log(res.data);
+      parent.append(cardMaker(res.data));
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
@@ -88,7 +98,7 @@ function cardMaker(obj) {
   const following = document.createElement('p');
   following.textContent = `Following: ${obj.following}`;
   const bio = document.createElement('p');
-  bio.textContent = `Bio: ${obj.bio}`;
+  bio.textContent = `Bio: 0${obj.bio}`;
 
   profile.append(profileLink);
   info.append(name, username, location, profile, followers, following, bio);
