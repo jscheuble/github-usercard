@@ -3,6 +3,32 @@
            https://api.github.com/users/<your name>
 */
 
+const parent = document.querySelector('.cards');
+
+axios.get("https://api.github.com/users/jscheuble")
+  .then(response => {
+    console.log(response.data);
+    parent.append(cardMaker(response.data));
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+axios.get('https://api.github.com/users/jscheuble/followers')
+  .then(res => {
+    res.data.forEach(user => {
+      axios.get(user.url)
+      .then(res => {
+        parent.append(cardMaker(res.data));
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    })
+  })
+  .catch(err => {
+    console.log(err);
+  });
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -24,7 +50,18 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+// const followersArray = ['jscheuble', 'cgiroux86', 'CeeDeeBee', 'JGPico', 'juiceboxh3ro', 'kkslider2130'];
+
+// followersArray.forEach(e => {
+//   axios.get(`https://api.github.com/users/${e}`)
+//     .then(res => {
+//       console.log(res.data);
+//       parent.append(cardMaker(res.data));
+//     })
+//     .catch(err => {
+//       console.log(err);
+//     });
+// });
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -53,3 +90,39 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+function cardMaker(obj) {
+  const card = document.createElement('div');
+  card.classList.add('card');
+  const avatar = document.createElement('img');
+  avatar.src = obj.avatar_url;
+  const info = document.createElement('div');
+  info.classList.add('card-info');
+  const name = document.createElement('h3');
+  name.classList.add('name');
+  name.textContent = obj.name;
+  const username = document.createElement('p');
+  username.classList.add('username');
+  username.textContent = obj.login;
+  const location = document.createElement('p');
+  location.textContent = `Location: ${obj.location}`;
+  const profile = document.createElement('p');
+  profile.textContent = 'Profile: ';
+  const profileLink = document.createElement('a');
+  profileLink.href = obj.html_url;
+  profileLink.textContent = obj.html_url;
+  const followers = document.createElement('p');
+  followers.textContent = `Followers: ${obj.followers}`;
+  const following = document.createElement('p');
+  following.textContent = `Following: ${obj.following}`;
+  const bio = document.createElement('p');
+  bio.textContent = `Bio: ${obj.bio}`;
+
+  profile.append(profileLink);
+  info.append(name, username, location, profile, followers, following, bio);
+  card.append(avatar, info);
+
+  return card;
+}
+
+
